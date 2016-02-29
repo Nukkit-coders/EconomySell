@@ -14,7 +14,7 @@
   	</repository>
   	<repository>
   		<id>onebone</id>
-  		<url>http://jenkins.onebone.me:8080/plugin/repository/everything/</url>
+  		<url>http://jenkins.onebone.me/plugin/repository/everything/</url>
   	</repository>
   </repositories>
 
