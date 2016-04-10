@@ -314,7 +314,7 @@ public class EconomySell extends PluginBase implements Listener{
 					}
 					
 					this.api.addMoney(player, sell.getPrice(), true);
-					player.getInventory().addItem(item);
+					player.getInventory().remove(item);
 					player.sendMessage(this.getMessage("sold-item", new Object[]{
 							item.getName(), item.getCount(), sell.getPrice()
 					}));
