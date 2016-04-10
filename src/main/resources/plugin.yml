@@ -28,3 +28,5 @@ permissions:
       economysell.sell:
         description: Allows player to sold item to sell
         default: true
+      economysell.create:
+        description: Allows player to create sell center

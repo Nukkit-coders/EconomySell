@@ -13,5 +13,10 @@
 	"no-item": "&4%1&rが足りません。",
 	"failed-sell": "&4アイテムの販売が失敗しました。",
 	"sold-item": "%2つの&b%1を&6%MONETARY_UNIT%%3&rで売りました。",
-	"sell-breaking-forbidden": "&4販売所を壊せません。"
+	"sell-breaking-forbidden": "&4販売所を壊せません。",
+	
+	"sign-text-1": "[売]",
+	"sign-text-2": "{M}{0}",
+	"sign-text-3": "{0}",
+	"sign-text-4": "{0}"
 }

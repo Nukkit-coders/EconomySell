@@ -38,6 +38,8 @@ import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
+import cn.nukkit.event.block.BlockBreakEvent;
+import cn.nukkit.event.block.SignChangeEvent;
 import cn.nukkit.event.entity.EntityTeleportEvent;
 import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.event.player.PlayerJoinEvent;
@@ -116,7 +118,8 @@ public class EconomySell extends PluginBase implements Listener{
 	public void onEnable(){
 		this.saveDefaultConfig();
 		
-		InputStream is = this.getResource("lang_" + this.getConfig().get("langauge", "en") + ".json");
+		String name = this.getConfig().get("language", "en");
+		InputStream is = this.getResource("lang_" + name + ".json");
 		if(is == null){
 			this.getLogger().critical("Could not load language file. Changing to default.");
 			
@@ -127,6 +130,19 @@ public class EconomySell extends PluginBase implements Listener{
 			lang = new GsonBuilder().create().fromJson(Utils.readFile(is), new TypeToken<LinkedHashMap<String, String>>(){}.getType());
 		}catch(JsonSyntaxException | IOException e){
 			this.getLogger().critical(e.getMessage());
+		}
+		
+		if(!name.equals("en")){
+			try{
+				LinkedHashMap<String, String> temp = new GsonBuilder().create().fromJson(Utils.readFile(this.getResource("lang_en.json")), new TypeToken<LinkedHashMap<String, String>>(){}.getType());
+				temp.forEach((k, v) -> {
+					if(!lang.containsKey(k)){
+						lang.put(k, v);
+					}
+				});
+			}catch(IOException e){
+				this.getLogger().critical(e.getMessage());
+			}
 		}
 		
 		api = EconomyAPI.getInstance();
@@ -309,7 +325,7 @@ public class EconomySell extends PluginBase implements Listener{
 				
 				if(player.hasPermission("economysell.sell")){
 					if(!player.getInventory().contains(item)){
-						player.sendMessage(this.getMessage("no-item"));
+						player.sendMessage(this.getMessage("no-item", new Object[]{item.getName()}));
 						return;
 					}
 					
@@ -331,6 +347,60 @@ public class EconomySell extends PluginBase implements Listener{
 		
 		if(this.displayers.containsKey(player.getLevel())){
 			this.displayers.get(player.getLevel()).forEach(displayer -> displayer.spawnTo(player));
+		}
+	}
+	
+	@EventHandler
+	public void onBreak(BlockBreakEvent event){
+		Position pos = event.getBlock();
+		String key = pos.x + ":" + pos.y + ":" + pos.z + ":" + pos.level.getFolderName();
+		
+		if(this.sells.containsKey(key)){
+			event.setCancelled();
+			
+			event.getPlayer().sendMessage(this.getMessage("sell-breaking-forbidden"));
+		}
+	}
+	
+	@EventHandler
+	public void onSignChange(SignChangeEvent event){
+		String[] lines = event.getLines();
+		
+		if(lines[0].toLowerCase().equals("sell")){
+			Position pos = event.getBlock();
+			String key = pos.x + ":" + pos.y + ":" + pos.z + ":" + pos.level.getFolderName();
+			if(!this.sells.containsKey(key)){
+				Player player = event.getPlayer();
+				
+				if(player.hasPermission("economysell.create")){
+					float price;
+					int amount;
+					
+					try{
+						price = Float.parseFloat(lines[1]);
+						amount = Integer.parseInt(lines[3]);
+					}catch(NumberFormatException e){
+						player.sendMessage(this.getMessage("invalid-format"));
+						return;
+					}
+					
+					Item item = Item.fromString(lines[2]);
+					item.setCount(amount);
+					
+					this.provider.addSell(pos, item, price, -2);
+					
+					Sell sell = new Sell(pos, item, price, -2);
+					
+					this.sells.put(key, sell);
+					
+					event.setLine(0, this.getMessage("sign-text-1"));
+					event.setLine(1, this.getMessage("sign-text-2", new Object[]{price}));
+					event.setLine(2, this.getMessage("sign-text-3", new Object[]{item.getName()}));
+					event.setLine(3, this.getMessage("sign-text-4", new Object[]{amount}));
+					
+					player.sendMessage(this.getMessage("sell-created"));
+				}
+			}
 		}
 	}
 	
