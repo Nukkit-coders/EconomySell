@@ -99,19 +99,12 @@ public class EconomySell extends PluginBase implements Listener{
 						}
 					}catch(NumberFormatException e){}
 				}
-			}else if(c == '&'){
-				char color = lang.charAt(++i);
-				if((color >= '0' && color <= 'f') || color == 'r' || color == 'l' || color == 'o'){
-					builder.append(TextFormat.ESCAPE);
-					builder.append(color);
-					continue;
-				}
 			}
 			
 			builder.append(c);
 		}
 		
-		return builder.toString();
+		return TextFormat.colorize(builder.toString());
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -326,6 +319,11 @@ public class EconomySell extends PluginBase implements Listener{
 				if(player.hasPermission("economysell.sell")){
 					if(!player.getInventory().contains(item)){
 						player.sendMessage(this.getMessage("no-item", new Object[]{item.getName()}));
+						return;
+					}
+
+					if (player.isCreative()) {
+						player.sendMessage(this.getMessage("no-player"));
 						return;
 					}
 					
