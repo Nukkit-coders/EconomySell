@@ -353,15 +353,26 @@ public class EconomySell extends PluginBase implements Listener{
 		Position pos = event.getBlock();
 		String key = pos.x + ":" + pos.y + ":" + pos.z + ":" + pos.level.getFolderName();
 
-		if (this.sells.containsKey(key)) {
-			if (!event.getPlayer().hasPermission("economysell.break")) {
+		if(this.sells.containsKey(key)){
+			if(!event.getPlayer().hasPermission("economysell.break")) {
 				event.getPlayer().sendMessage(this.getMessage("sell-breaking-forbidden"));
 				event.setCancelled();
 				return;
 			}
-			this.provider.removeSell(pos);
-			this.sells.remove(key);
-			event.getPlayer().sendMessage(this.getMessage("sell-removed"));
+			
+			if(this.getConfig().getBoolean("destroy.break")){
+				Sell shop = this.sells.get(key);
+				
+				if(shop.getDisplayer() != null){
+					if(this.displayers.containsKey(pos.level)){
+						this.displayers.get(pos.level).remove(shop.getDisplayer());
+					}
+				}
+				this.sells.remove(key);
+				this.provider.removeSell(pos);
+				
+				event.getPlayer().sendMessage(this.getMessage("sell-removed"));
+			}
 		}
 	}
 
