@@ -30,3 +30,5 @@ permissions:
         default: true
       economysell.create:
         description: Allows player to create sell center
+      economysell.break:
+        description: Allows player to break sell center

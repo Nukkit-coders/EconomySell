@@ -99,19 +99,12 @@ public class EconomySell extends PluginBase implements Listener{
 						}
 					}catch(NumberFormatException e){}
 				}
-			}else if(c == '&'){
-				char color = lang.charAt(++i);
-				if((color >= '0' && color <= 'f') || color == 'r' || color == 'l' || color == 'o'){
-					builder.append(TextFormat.ESCAPE);
-					builder.append(color);
-					continue;
-				}
 			}
 			
 			builder.append(c);
 		}
 		
-		return builder.toString();
+		return TextFormat.colorize(builder.toString());
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -328,6 +321,11 @@ public class EconomySell extends PluginBase implements Listener{
 						player.sendMessage(this.getMessage("no-item", new Object[]{item.getName()}));
 						return;
 					}
+
+					if (player.isCreative()) {
+						player.sendMessage(this.getMessage("no-player"));
+						return;
+					}
 					
 					this.api.addMoney(player, sell.getPrice(), true);
 					player.getInventory().remove(item);
@@ -351,22 +349,27 @@ public class EconomySell extends PluginBase implements Listener{
 	}
 	
 	@EventHandler
-	public void onBreak(BlockBreakEvent event){
+	public void onBreak(BlockBreakEvent event) {
 		Position pos = event.getBlock();
 		String key = pos.x + ":" + pos.y + ":" + pos.z + ":" + pos.level.getFolderName();
-		
-		if(this.sells.containsKey(key)){
-			event.setCancelled();
-			
-			event.getPlayer().sendMessage(this.getMessage("sell-breaking-forbidden"));
+
+		if (this.sells.containsKey(key)) {
+			if (!event.getPlayer().hasPermission("economysell.break")) {
+				event.getPlayer().sendMessage(this.getMessage("sell-breaking-forbidden"));
+				event.setCancelled();
+				return;
+			}
+			this.provider.removeSell(pos);
+			this.sells.remove(key);
+			event.getPlayer().sendMessage(this.getMessage("sell-removed"));
 		}
 	}
-	
+
 	@EventHandler
-	public void onSignChange(SignChangeEvent event){
+	public void onSignChange(SignChangeEvent event) {
 		String[] lines = event.getLines();
-		
-		if(lines[0].toLowerCase().equals("sell")){
+
+		if (lines[0].equalsIgnoreCase("sell") || lines[0].equalsIgnoreCase("[sell]")) {
 			Position pos = event.getBlock();
 			String key = pos.x + ":" + pos.y + ":" + pos.z + ":" + pos.level.getFolderName();
 			if(!this.sells.containsKey(key)){
