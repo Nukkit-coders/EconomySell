@@ -155,9 +155,9 @@ public class EconomySell extends PluginBase implements Listener{
 					(int)val.get(9));
 			
 			Position pos = sell.getPosition();
-			sells.put(pos.x + ":" + pos.y + ":" + pos.z + ":" + pos.level.getFolderName(), sell);
+			sells.put(pos.x + ":" + pos.y + ":" + pos.z + ":" + sell.getLevelName(), sell);
 			
-			if(sell.getDisplayer() != null){ // item display option is 'none'
+			if(sell.getDisplayer() != null && sell.getPosition().getLevel() != null){ // item display option is 'none'
 				if(!displayers.containsKey(sell.getPosition().getLevel())){
 					displayers.put(sell.getPosition().getLevel(), new ArrayList<ItemDisplayer>());
 				}
@@ -259,7 +259,7 @@ public class EconomySell extends PluginBase implements Listener{
 				if(!this.sells.containsKey(key)){
 					this.provider.addSell(pos, (Item)info[1], (float) info[3], (int) info[2]);
 					
-					Sell sell = new Sell(pos, (Item)info[1], (float) info[3], (int) info[2]);
+					Sell sell = new Sell(pos, pos.level.getFolderName(), (Item)info[1], (float) info[3], (int) info[2]);
 					
 					this.sells.put(key, sell);
 					
@@ -403,7 +403,7 @@ public class EconomySell extends PluginBase implements Listener{
 					
 					this.provider.addSell(pos, item, price, -2);
 					
-					Sell sell = new Sell(pos, item, price, -2);
+					Sell sell = new Sell(pos, pos.level.getFolderName(), item, price, -2);
 					
 					this.sells.put(key, sell);
 					
