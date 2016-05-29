@@ -253,6 +253,8 @@ public class EconomySell extends PluginBase implements Listener{
 		String key = pos.x + ":" + pos.y + ":" + pos.z + ":" + pos.level.getFolderName();
 		
 		if(queue.containsKey(player.getName().toLowerCase())){
+			event.setCancelled();
+			
 			Object[] info = queue.get(player.getName().toLowerCase());
 			
 			if((boolean) info[0]){
@@ -300,6 +302,8 @@ public class EconomySell extends PluginBase implements Listener{
 			Sell sell = this.sells.get(key);
 			
 			if(sell != null){
+				event.setCancelled();
+				
 				Item item = sell.getItem();
 				
 				if(this.getConfig().get("sell.tap-twice", true)){
