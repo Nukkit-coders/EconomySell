@@ -4,4 +4,4 @@ language: en
 sell:
   tap-twice: true
 destroy:
-  block: false
+  block: true

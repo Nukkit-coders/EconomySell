@@ -364,7 +364,7 @@ public class EconomySell extends PluginBase implements Listener{
 				return;
 			}
 			
-			if(this.getConfig().getBoolean("destroy.break")){
+			if(this.getConfig().getBoolean("destroy.break", true)){
 				Sell shop = this.sells.get(key);
 				
 				if(shop.getDisplayer() != null){
