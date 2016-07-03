@@ -247,6 +247,8 @@ public class EconomySell extends PluginBase implements Listener{
 	
 	@EventHandler
 	public void onTouch(PlayerInteractEvent event){
+		if(event.getAction() == PlayerInteractEvent.LEFT_CLICK_AIR || event.getAction() == PlayerInteractEvent.RIGHT_CLICK_AIR) return;
+		
 		Player player = event.getPlayer();
 		Position pos = (Position)event.getBlock();
 		
