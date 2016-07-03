@@ -9,6 +9,10 @@ commands:
     description: Sell management command
     usage: /sell <create|remove> [item[:damage]] [amount] [price] [side]
     permission: economysell.command.sell;economysell.command.sell.create;economysell.command.sell.remove;
+  vend:
+    description: Vending command
+    usage: /vend [amount]
+    permission: economysell.command.vend
     
 
 permissions:
@@ -25,6 +29,9 @@ permissions:
                 description: Allows player to use /sell create
               economysell.command.sell.remove:
                 description: Allows player to use /sell remove
+          economysell.command.vend:
+            description: Allows player to use /vend
+            default: true
       economysell.sell:
         description: Allows player to sold item to sell
         default: true

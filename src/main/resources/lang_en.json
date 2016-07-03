@@ -15,6 +15,10 @@
 	"failed-sell": "&4Failed to sell item due to unknown reason.",
 	"sold-item": "You have sold item {1} of &b{0}&r for &6{M}{2}&r.",
 	"sell-breaking-forbidden": "&4You cannot break sell centers.",
+	"select-sell": "&4Please select a sell center to buy from.",
+	"vending-not-enabled": "&4Selling item from command is not enabled.",
+	"invalid-amount": "&4Invalid amount was given.",
+	"invalid-amount-multiple": "&4Amount must be multiple of {0}.",
 	
 	"sign-text-1": "[SELL]",
 	"sign-text-2": "{M}{0}",

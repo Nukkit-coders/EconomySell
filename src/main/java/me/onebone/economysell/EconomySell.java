@@ -56,7 +56,7 @@ public class EconomySell extends PluginBase implements Listener{
 	private Map<String, Sell> sells;
 	private Map<String, Object[]> queue;
 	private Map<String, String> lang;
-	private Map<Player, Long> taps;
+	private Map<Player, Object[]> taps;
 	
 	private Map<Level, List<ItemDisplayer>> displayers = null;
 	
@@ -241,6 +241,66 @@ public class EconomySell extends PluginBase implements Listener{
 			}else{
 				sender.sendMessage(TextFormat.RED + "Usage: " + command.getUsage());
 			}
+		}else if(command.getName().equals("vend")){
+			if(!(sender instanceof Player)){
+				sender.sendMessage(TextFormat.RED + "Please run this command in-game.");
+				return true;
+			}
+			
+			if(!this.getConfig().getBoolean("sell.enable-vend", true)){
+				sender.sendMessage(this.getMessage("vending-not-enabled"));
+				return true;
+			}
+			
+			Player player = (Player) sender;
+			if(this.taps.containsKey(player)){
+				Object[] tap = this.taps.get(player);
+				Item item = ((Item) tap[1]).clone();
+				
+				double price = (double) tap[2];
+				int amount = item.getCount();
+				
+				if(args.length > 0){
+					try{
+						amount = Integer.parseInt(args[0]);
+					}catch(NumberFormatException e){
+						sender.sendMessage(this.getMessage("invalid-message"));
+						return true;
+					}
+				}
+				
+				if(amount % item.getCount() == 0){
+					price = price * (amount / item.getCount());
+					item.setCount(amount);
+					
+					if(player.hasPermission("economysell.sell")){
+						if(!player.getInventory().contains(item)){
+							player.sendMessage(this.getMessage("no-item", new Object[]{item.getName()}));
+							return true;
+						}
+
+						if (player.isCreative()) {
+							player.sendMessage(this.getMessage("no-player"));
+							return true;
+						}
+						
+						this.api.addMoney(player, price, true);
+						player.getInventory().removeItem(item);
+						player.sendMessage(this.getMessage("sold-item", new Object[]{
+								item.getName(), item.getCount(), price
+						}));
+					}else{
+						player.sendMessage(this.getMessage("no-permission-sell"));
+					}
+				}else{
+					player.sendMessage(this.getMessage("invalid-amount-multiple", new Object[]{item.getCount()}));
+				}
+				
+				this.taps.remove(player);
+			}else{
+				player.sendMessage(this.getMessage("select-sell"));
+			}
+			return true;
 		}
 		return false;
 	}
@@ -310,12 +370,16 @@ public class EconomySell extends PluginBase implements Listener{
 				
 				if(this.getConfig().get("sell.tap-twice", true)){
 					long now = System.currentTimeMillis();
-					if(!this.taps.containsKey(player) || now - this.taps.get(player) > 1000){
+					
+					Object[] tap = this.taps.get(player);
+					if(!this.taps.containsKey(player) || now - ((Long) tap[0]) > 1000){
 						player.sendMessage(this.getMessage("tap-again", new Object[]{
 								item.getName(), item.getCount(), sell.getPrice()
 						}));
 						
-						this.taps.put(player, now);
+						this.taps.put(player, new Object[]{
+							now, item, sell.getPrice()
+						});
 						return;
 					}else{
 						this.taps.remove(player);

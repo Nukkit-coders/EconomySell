@@ -15,6 +15,10 @@
         "failed-sell": "&4알 수 없는 이유로 판매를 실패하였습니다.",
         "sold-item": "{1}개의 &b{0} 를 &6{M}{2}&r 에 판매하였습니다.",
         "sell-breaking-forbidden": "&4판매소를 때려 부술 수 없습니다.",
+        "select-sell": "&4물건을 판매할 노점상을 선택하세요.",
+		"vending-not-enabled": "&4명령어를 통한 판매는 활성화돼있지 않습니다.",
+		"invalid-amount": "&4올바르지 않은 개수가 주어졌습니다.",
+		"invalid-amount-multiple": "&4개수는 {0}의 배수여야 합니다.",
 
         "sign-text-1": "[노점상]",
         "sign-text-2": "{M}{0}",

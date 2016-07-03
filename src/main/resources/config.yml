@@ -3,5 +3,6 @@ data:
 language: en
 sell:
   tap-twice: true
+  enable-vend: true
 destroy:
   block: true
