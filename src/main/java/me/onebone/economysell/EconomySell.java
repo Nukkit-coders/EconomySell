@@ -42,6 +42,7 @@ import cn.nukkit.event.block.BlockBreakEvent;
 import cn.nukkit.event.block.SignChangeEvent;
 import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.event.player.PlayerJoinEvent;
+import cn.nukkit.event.player.PlayerMoveEvent;
 import cn.nukkit.event.player.PlayerTeleportEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
@@ -490,19 +491,51 @@ public class EconomySell extends PluginBase implements Listener{
 	
 	@EventHandler
 	public void onTeleport(PlayerTeleportEvent event){
-		Player player = event.getPlayer();
-		
 		Position from = event.getFrom();
 		Position to = event.getTo();
 		
 		if(from.getLevel() != to.getLevel()){
-			if(this.displayers.containsKey(from.getLevel())){
+			this.display(event.getPlayer(), from, to);
+			/*if(this.displayers.containsKey(from.getLevel())){
 				this.displayers.get(from.getLevel()).forEach((displayer) -> displayer.despawnFrom(player));
 			}
 			
 			if(this.displayers.containsKey(to.getLevel())){
 				this.displayers.get(to.getLevel()).forEach((displayer) -> displayer.spawnTo(player));
-			}
+			}*/
+		}
+	}
+
+	@EventHandler
+	public void onPlayerMove(PlayerMoveEvent event){
+		Position from = event.getFrom();
+		Position to = event.getTo();
+		
+		if(from.getLevel() == to.getLevel()
+			&& ((int) from.x >> 4 != (int) to.x >> 4
+			|| (int) from.z >> 4 != (int) to.z >> 4)){
+
+			this.display(event.getPlayer(), from, to);
+		}
+	}
+
+	private void display(Player player, Position from, Position to){
+		if(from != null && this.displayers.containsKey(to.getLevel())){
+			this.displayers.get(from.getLevel()).forEach(d -> {
+				if((int) from.x >> 4 == (int) d.getPosition().x >> 4
+					&& (int) from.z >> 4 == (int) d.getPosition().z >> 4){
+					d.despawnFrom(player);
+				}
+			});
+		}
+		
+		if(this.displayers.containsKey(to.getLevel())){
+			this.displayers.get(to.getLevel()).forEach(d -> {
+				if((int) to.x >> 4 == (int) d.getPosition().x >> 4
+					&& (int) to.z >> 4 == (int) d.getPosition().z >> 4){
+					d.spawnTo(player);
+				}
+			});
 		}
 	}
 	
