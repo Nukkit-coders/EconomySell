@@ -54,7 +54,8 @@ public class ItemDisplayer{
 	
 	public void spawnTo(Player player){
 		AddItemEntityPacket pk = new AddItemEntityPacket();
-		pk.eid = this.eid;
+		pk.entityUniqueId = this.eid;
+		pk.entityRuntimeId = this.eid;
 		pk.item = item;
 		pk.speedX = pk.speedY = pk.speedZ = 0;
 		pk.x = (float) pos.x + 0.5F;
