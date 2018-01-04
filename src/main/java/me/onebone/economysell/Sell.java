@@ -40,8 +40,9 @@ public class Sell{
 			this.displayer = new ItemDisplayer(this, new Position(pos.x, pos.y, pos.z, pos.level), item);
 		}else if(side == -2){
 			return;
-		}else{
-			this.displayer = new ItemDisplayer(this, pos.getSide(side), item);
+//		}else{
+//			this.displayer = new ItemDisplayer(this, pos.getSide(side), item);
+//fix later
 		}
 	}
 	
